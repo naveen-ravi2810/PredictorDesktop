@@ -1,0 +1,11 @@
+/files
+
+/LocalBackend/*/__pycache__
+/LocalBackend/__pycache__
+/LocalBackend/venv
+
+/Backend/venv
+/Backend/__pycache__
+/Backend/*/__pycache__
+
+/*/.env
