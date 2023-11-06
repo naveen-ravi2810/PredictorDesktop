@@ -1,0 +1,2 @@
+source LocalBackend/venv/bin/activate
+/bin/python3 LocalBackend/main.py

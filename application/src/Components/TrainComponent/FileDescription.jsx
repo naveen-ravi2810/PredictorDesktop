@@ -88,6 +88,8 @@ import axios from 'axios';
 // Data Preprocessing Component
 export const DataPreprocessingForm = ({HeaderKeys, InputFileType}) => {
   const [PreprocessingDetails, setPreprocessingDetails] = useState({})
+  const [AfterPreprocessing, setAfterPreprocessing] = useState(false)
+  const [ResponseData, setResponseData] = useState([])
   function updatePreprocessingDetails(e){
     setPreprocessingDetails({
       ...PreprocessingDetails,
@@ -102,44 +104,81 @@ export const DataPreprocessingForm = ({HeaderKeys, InputFileType}) => {
           formDetails.append(key, PreprocessingDetails[key])
         }
         const response = await axios.post('/localapi/datapreprocessing', formDetails)
-        console.log(response)
+        setResponseData(response.data)
+        setAfterPreprocessing(true)
       }
     return(
-        <form id="options" onSubmit={funDataPreprocessing}>
-        <br />
-            {/* Requesting for NaN Values */}
-            <h1 className='text-xl font-bold uppercase text-orange-500 underline flex'> Missing Value Approach</h1>
+       <div>
+         <form id="options" onSubmit={funDataPreprocessing}>
             <br />
-                <select name="misingValue" id="" onChange={updatePreprocessingDetails} required>
-                    <option value="" >Select</option>
-                    <option value="mean/median">Mean/Median</option>
-                    <option value="removerow">Remove Row</option>
+            {/* Basic Details */}
+                <h1 className='text-xl font-bold uppercase text-orange-500 underline flex'> File Name</h1><br />
+                <div>
+                <label>Name</label> <input className='outline-none border-[1px] border-orange-400 px-1 rounded' type="text" name='name' onChange={updatePreprocessingDetails}/>
+                </div> <br />
+                <div className='flex items-start gap-3'>
+                <label>Description</label> <textarea className='outline-none border-[1px] border-orange-400 px-1 rounded' name="description" onChange={updatePreprocessingDetails} id="" cols="30" rows="5"></textarea>
+                </div>
+                {/* Requesting for NaN Values */}
+                <br />
+                <h1 className='text-xl font-bold uppercase text-orange-500 underline flex'> Missing Value Approach</h1>
+                <br />
+                    <select name="misingValue" id="" onChange={updatePreprocessingDetails} required>
+                        <option value="" >Select</option>
+                        <option value="mean/median">Mean/Median</option>
+                        <option value="removerow">Remove Row</option>
+                    </select>
+                <br />
+                {/* Requesting a Encoding Technique */}
+                <br />
+                <h1 className='text-xl font-bold uppercase text-orange-500 underline'> Select Encoding Technique</h1>
+                <br />
+                <select name='encodingtonumbers' id='' onChange={updatePreprocessingDetails} required>
+                  <option value="" >Select</option>
+                  <option value="onehotencoding">One Hot Encoding</option>
+                  <option value="labelencoding">Label Encoding</option>
                 </select>
-            <br />
-            {/* Requesting a Encoding Technique */}
-            <br />
-            <h1 className='text-xl font-bold uppercase text-orange-500 underline'> Select Encoding Technique</h1>
-            <br />
-            <select name='encodingtonumbers' id='' onChange={updatePreprocessingDetails} required>
-              <option value="" >Select</option>
-              <option value="onehotencoding">One Hot Encoding</option>
-              <option value="labelencoding">Label Encoding</option>
-            </select>
-            <br />
-            {/* Requesting A output column for Co-relation and Prediction */}
-            <br />
-            <h1 className='text-xl font-bold uppercase text-orange-500 underline'> Select Output Column</h1>
-            <br />
-            <select name="outputcolumn" id="" onChange={updatePreprocessingDetails} required>
-              <option value="">Select</option>
-            {HeaderKeys.map((Header, index)=>{
-                return(
-                    <option value={Header} key={index}>{Header}</option>
-                )
-            })}
-            </select> 
-            <br /> <br />
-            <button type='submit'>Complete Data Preprocessing</button>
-      </form>
+                <br />
+                {/* Requesting A output column for Co-relation and Prediction */}
+                <br />
+                <h1 className='text-xl font-bold uppercase text-orange-500 underline'> Select Output Column</h1>
+                <br />
+                <select name="outputcolumn" id="" onChange={updatePreprocessingDetails} required>
+                  <option value="">Select</option>
+                {HeaderKeys.map((Header, index)=>{
+                    return(
+                        <option value={Header} key={index}>{Header}</option>
+                    )
+                })}
+                </select> 
+                <br /> <br />
+                <button type='submit'>Complete Data Preprocessing</button>
+          </form>
+          { AfterPreprocessing && <DataCoRelation ResponseData={ResponseData} />}
+       </div>
     )
+}
+
+
+// import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+// import { Doughnut } from "react-chartjs-2";
+// ChartJS.register(ArcElement, Tooltip, Legend);
+
+export const DataCoRelation = ({ResponseData}) =>{
+  const [Co_relationData, setCo_relationData] = useState([])
+  const [Co_relationDetails, setCo_relationDetails] = useState(false)
+  async function getCorelation(){
+    const response = await axios.get('/localapi/getcorelation',{
+      params : ResponseData
+    })  
+    setCo_relationData(response.data)
+    setCo_relationDetails(true)
+  }
+  return(
+    <div>
+      GET CO-Relation
+      <button onClick={()=>getCorelation()}>Get co-relation</button>
+      {/* { Co_relationDetails && <Doughnut data={Co_relationData['price']} />} */}
+    </div>
+  )
 }

@@ -11,10 +11,13 @@ class DataPreprocessingResource(Resource):
             misingValue = dataForm['misingValue']
             encodingtonumbers = dataForm['encodingtonumbers']
             outputcolumn = dataForm['outputcolumn']
-            preprocessingResult = Preprocessing(file = dataset, misingValue = misingValue, encodingtonumbers = encodingtonumbers, outputcolumn = outputcolumn )
+            name = dataForm['name']
+            description = dataForm['description']
+            preprocessingResult = Preprocessing(file = dataset, misingValue = misingValue, encodingtonumbers = encodingtonumbers, outputcolumn = outputcolumn, name = name, description=description )
             response_data = {
                 'status':True,
-                # 'preprocessed_data' : preprocessingResult
+                'preprocessed_data_path' : preprocessingResult['file_path'],
+                'id' : preprocessingResult['id']
             }
             return jsonify(response_data)
         except Exception as e:

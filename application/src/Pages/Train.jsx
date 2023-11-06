@@ -23,7 +23,7 @@ export const Train = () => {
     document.location.reload()
   }
   return (
-    <div className='h-full w-full overflow-y-auto py-5 px-3'>
+    <div id='div_Trainer' className='h-full w-full overflow-y-auto py-5 px-3'>
         <h1 className='text-4xl flex  items-center gap-3'>Trainer <button onClick={()=>Refresh()}><AiOutlineReload/></button><span className='text-sm'>ℹ️</span> </h1> 
         <br />
         <div id="Trainarea">
